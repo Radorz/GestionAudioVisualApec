@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación de Tecnología de Conexión{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">Eliminar Tecnología de Conexión</h2>
+    <p>¿Estás seguro de que deseas eliminar la tecnología de conexión <strong>{{ object.descripcion }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Eliminar
+        </button>
+        <a href="{% url 'tecnologiaconexion-list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}

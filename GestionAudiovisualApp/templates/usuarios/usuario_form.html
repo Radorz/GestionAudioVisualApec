@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ view.object|default:"Crear Nuevo Usuario" }}{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">{{ view.object|default:"Crear Nuevo Usuario" }}</h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.nombre|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.cedula|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.numero_carnet|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.tipo_usuario|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.tipo_persona|as_crispy_field }}
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'usuario-list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}

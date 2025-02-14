@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Modelos{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">Lista de Modelos</h2>
+        <form method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o marca" value="{{ request.GET.q }}">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Estado</th>
+                <th> <!-- Botón Crear -->
+                    <a href="{% url 'modelo-create' %}" class="btn btn-sm btn-create">
+                        <i class="fas fa-plus"></i> Crear
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for modelo in modelos %}
+                <tr>
+                    <td>{{ modelo.pk }}</td>
+                    <td>{{ modelo.descripcion }}</td>
+                    <td>{{ modelo.marca.descripcion }}</td>
+                    <td>
+                        {% if modelo.estado %}
+                            <span class="badge bg-success">Activo</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'modelo-toggle-estado' modelo.pk %}" style="display:inline;">
+                            {% csrf_token %}
+                            {% if modelo.estado %}
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-ban"></i> Desactivar
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Activar
+                                </button>
+                            {% endif %}
+                        </form>
+                        <a href="{% url 'modelo-update' modelo.pk %}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                        <a href="{% url 'modelo-delete' modelo.pk %}" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay modelos disponibles.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

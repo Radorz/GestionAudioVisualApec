@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestión AudioVisual{% endblock %}</title>
+
+    <!-- Bootstrap 5 and FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background-color: #1c1e21;
+            color: #fff;
+        }
+        #sidebar .nav-link {
+            color: #adb5bd;
+            padding: 10px 20px;
+        }
+        #sidebar .nav-link:hover {
+            background-color: #343a40;
+            color: #fff;
+        }
+        #sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+        #sidebar h4 {
+            padding: 15px 20px;
+            margin: 0;
+            font-weight: 500;
+            color: #fff;
+        }
+        #content {
+            flex: 1;
+            padding: 20px;
+        }
+        .btn-create {
+            background-color: #198754;
+            color: white;
+        }
+        .btn-create:hover {
+            background-color: #157347;
+            color: white;
+        }
+        .table th {
+            background-color: #343a40;
+            color: white;
+        }
+        .table td, .table th {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 bg-dark">
+        <h4>Gestión AudioVisual</h4>
+        {% if user.is_authenticated%}
+            <p>Hi, {{user.username}} :)</p>
+            <p><a href="{% url 'logout' %}">Log Out</a></p>
+        {%else%}
+            <p>You are not logged in</p>
+            <a class="btn btn-sm btn-primary" href="{% url 'login' %}">Login</a>
+        {%endif%}
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">       
+            <!-- Opción para Prestamos -->
+        <li class="nav-item">
+            <a href="{% url 'prestamo-list' %}" class="nav-link {% if request.resolver_match.url_name == 'prestamo-list' %}active{% endif %}">
+                <i class="fas fa-exchange-alt"></i> Prestamos
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'consulta-criterios' %}" class="nav-link {% if request.resolver_match.url_name == 'consulta-criterios' %}active{% endif %}">
+                <i class="fas fa-exchange-alt"></i> Consulta
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#submenu-administracion" aria-expanded="false" aria-controls="submenu-administracion">
+                <i class="fas fa-cogs"></i> Administracion
+            </a>
+            <ul class="collapse list-unstyled ms-3" id="submenu-administracion">
+                <li class="nav-item">
+                    <a href="{% url 'tipoequipo-list' %}" class="nav-link {% if request.resolver_match.url_name == 'tipoequipo-list' %}active{% endif %}">
+                        <i class="fas fa-list"></i> Tipos de Equipos
+                    </a>
+                </li>
+    
+            <!-- Opción para Marcas -->
+            <li class="nav-item">
+                <a href="{% url 'marca-list' %}" class="nav-link {% if request.resolver_match.url_name == 'marca-list' %}active{% endif %}">
+                    <i class="fas fa-tags"></i> Marcas
+                </a>
+            </li>
+            <!-- Opción para Modelos -->
+            <li class="nav-item">
+                <a href="{% url 'modelo-list' %}" class="nav-link {% if request.resolver_match.url_name == 'modelo-list' %}active{% endif %}">
+                    <i class="fas fa-cubes"></i> Modelos
+                </a>
+            </li>
+            <!-- Opción para Tecnologías de Conexión -->
+            <li class="nav-item">
+                <a href="{% url 'tecnologiaconexion-list' %}" class="nav-link {% if request.resolver_match.url_name == 'tecnologiaconexion-list' %}active{% endif %}">
+                    <i class="fas fa-network-wired"></i> Tecnologías de Conexión
+                </a>
+            </li>
+            <!-- Opción para Equipos -->
+            <li class="nav-item">
+                <a href="{% url 'equipo-list' %}" class="nav-link {% if request.resolver_match.url_name == 'equipo-list' %}active{% endif %}">
+                    <i class="fas fa-laptop"></i> Equipos
+                </a>
+            </li>
+            </ul>
+        </li>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#submenu-Seguridad" aria-expanded="false" aria-controls="submenu-seguridad">
+                <i class="fas fa-key"></i> Seguridad
+            </a>
+            <ul class="collapse list-unstyled ms-3" id="submenu-Seguridad">
+        <!-- Opción para Usuarios -->
+        <li class="nav-item">
+            <a href="{% url 'usuario-list' %}" class="nav-link {% if request.resolver_match.url_name == 'usuario-list' %}active{% endif %}">
+                <i class="fas fa-user"></i> Usuarios
+            </a>
+        </li>
+
+          <!-- Opción para Empleados -->
+          <li class="nav-item">
+            <a href="{% url 'empleado-list' %}" class="nav-link {% if request.resolver_match.url_name == 'empleado-list' %}active{% endif %}">
+                <i class="fas fa-user-tie"></i> Empleados
+            </a>
+        </li>
+            </ul>
+        </li>
+    </ul>
+            <!-- Agregar más ítems si es necesario -->
+        </ul>
+    </nav>
+
+    <!-- Main content -->
+    <div id="content">
+        {% block content %}
+        <!-- Aquí va el contenido específico de cada vista -->
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Préstamos{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Lista de Préstamos</h2>
+
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Buscar por empleado o equipo" value="{{ request.GET.q }}">
+        <button class="btn btn-outline-primary" type="submit">
+            <i class="fas fa-search"></i> Buscar
+        </button>
+    </div>
+</form>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Empleado</th>
+            <th>Equipo</th>
+            <th>Usuario</th>
+            <th>Fecha Préstamo</th>
+            <th>Fecha Devolución</th>
+            <th>Estado</th>
+            <th>
+                <a href="{% url 'prestamo-create' %}" class="btn btn-sm btn-success">
+                    <i class="fas fa-plus"></i> Crear
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for prestamo in prestamos %}
+        <tr>
+            <td>{{ prestamo.id }}</td>
+            <td>{{ prestamo.empleado.nombre }}</td> 
+            <td>{{ prestamo.equipo.descripcion }}</td>
+            <td>{{ prestamo.usuario.nombre }}</td>
+            <td>{{ prestamo.fecha_prestamo|date:"d M Y, H:i" }}</td> 
+            <td>
+                {% if prestamo.fecha_devolucion %}
+                    {{ prestamo.fecha_devolucion|date:"d M Y, H:i" }}
+                {% else %}
+                    <span class="text-muted">No devuelto</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if prestamo.estado %}
+                    <span class="badge bg-primary">Prestado</span>
+                {% else %}
+                    <span class="badge bg-success">Devuelto</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if prestamo.estado %}
+                <a href="{% url 'devolver-prestamo' prestamo.id %}" class="btn btn-sm btn-success">Devolución</a>
+            {% endif %}
+                <a href="{% url 'prestamo-update' prestamo.pk %}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                <a href="{% url 'prestamo-delete' prestamo.pk %}" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" class="text-center">No hay préstamos registrados.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if view.object %}
+        Editar Préstamo
+    {% else %}
+        Crear Nuevo Préstamo
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>
+    {% if view.object %}
+        Editar Préstamo
+    {% else %}
+        Crear Nuevo Préstamo
+    {% endif %}
+</h2>
+
+<form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'prestamo-list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

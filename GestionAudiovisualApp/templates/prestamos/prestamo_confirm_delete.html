@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Préstamo{% endblock %}
+
+{% block content %}
+<h2>Eliminar Préstamo</h2>
+<p>¿Estás seguro que deseas eliminar este préstamo?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'prestamo-list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

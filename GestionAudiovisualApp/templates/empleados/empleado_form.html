@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if view.object %}
+        Editar Empleado
+    {% else %}
+        Crear Nuevo Empleado
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2>
+        {% if view.object %}
+            Editar Empleado
+        {% else %}
+            Crear Nuevo Empleado
+        {% endif %}
+    </h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.nombre|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.cedula|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.tanda_labor|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.fecha_ingreso|as_crispy_field }}
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'empleado-list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}

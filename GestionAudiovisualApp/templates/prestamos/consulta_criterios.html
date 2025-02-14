@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Consulta por Criterios{% endblock %}
+
+{% block content %}
+<h2>Consulta por Criterios</h2>
+
+<form method="GET" class="mb-4">
+    <div class="row g-3">
+        <!-- Fila para Usuario y Equipo -->
+        <div class="col-md-6">
+            <label for="usuario" class="form-label">Usuario</label>
+            <select id="usuario" name="usuario" class="form-select">
+                <option value="">Seleccione un usuario</option>
+                <!-- Opciones dinámicas -->+
+                {% for user in form.fields.usuario.queryset  %}
+                <option value="{{ user.id }}" {% if request.GET.usuario == user.id|stringformat:"s" %}selected{% endif %}>{{ user }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="equipo" class="form-label">Equipo</label>
+            <select id="equipo" name="equipo" class="form-select">
+                <option value="">Seleccione un equipo</option>
+                <!-- Opciones dinámicas -->
+                {% for equipo in form.fields.equipo.queryset %}
+                <option value="{{ equipo.pk }}" {% if request.GET.equipo == equipo.pk|stringformat:"s" %}selected{% endif %}>{{ equipo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <!-- Fila para Fechas -->
+        <div class="col-md-6">
+            <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+            <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" value="{{ request.GET.fecha_inicio }}">
+        </div>
+        <div class="col-md-6">
+            <label for="fecha_fin" class="form-label">Fecha Fin</label>
+            <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="{{ request.GET.fecha_fin }}">
+        </div>
+
+        <!-- Fila para Tipo de Equipo -->
+        <div class="col-md-6">
+            <label for="tipo_equipo" class="form-label">Tipo de Equipo</label>
+            <select id="tipo_equipo" name="tipo_equipo" class="form-select">
+                <option value="">Seleccione un tipo</option>
+                <!-- Opciones dinámicas -->
+                {% for tipo in form.fields.tipo_equipo.queryset %}
+                <option value="{{ tipo.id }}" {% if request.GET.tipo_equipo == tipo.id|stringformat:"s" %}selected{% endif %}>{{ tipo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Botón de Buscar -->
+        <div class="col-md-12 text-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </div>
+    </div>
+</form>
+
+{% if prestamos %}
+    <h3>Resultados</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Empleado</th>
+                <th>Equipo</th>
+                <th>Fecha Préstamo</th>
+                <th>Fecha Devolución</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prestamo in prestamos %}
+                <tr>
+                    <td>{{ prestamo.id }}</td>
+                    <td>{{ prestamo.usuario }}</td>
+                    <td>{{ prestamo.empleado }}</td>
+                    <td>{{ prestamo.equipo }}</td>
+                    <td>{{ prestamo.fecha_prestamo }}</td>
+                    <td>{{ prestamo.fecha_devolucion }}</td>
+                    <td>{{ prestamo.estado|yesno:"Activo,Inactivo" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No se encontraron resultados.</p>
+{% endif %}
+{% endblock %}

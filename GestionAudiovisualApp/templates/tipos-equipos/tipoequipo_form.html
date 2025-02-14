@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}  <!-- Cargar crispy_forms_tags -->
+
+{% block title %}Crear Nuevo Tipo de Equipo{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">Crear Nuevo Tipo de Equipo</h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.descripcion|as_crispy_field }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'tipoequipo-list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <script>
+        // Bootstrap validation script
+        (function () {
+            'use strict'
+
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+{% endblock %}

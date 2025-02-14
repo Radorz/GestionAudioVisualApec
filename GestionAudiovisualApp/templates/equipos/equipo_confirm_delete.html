@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Equipo{% endblock %}
+
+{% block content %}
+<h2>¿Estás seguro de que deseas eliminar este equipo?</h2>
+<p><strong>Descripción:</strong> {{ object.descripcion }}</p>
+<p><strong>Número Serial:</strong> {{ object.numero_serial }}</p>
+<p><strong>Service Tag:</strong> {{ object.service_tag }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'equipo-list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

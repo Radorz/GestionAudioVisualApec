@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Eliminar Marca</h2>
+    <p>¿Estás seguro de que deseas eliminar la marca "{{ object.nombre }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <a href="{% url 'marca-list' %}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Eliminar
+        </button>
+    </form>
+</div>
+{% endblock %}

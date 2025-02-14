@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if object %}
+        Editar Tecnología de Conexión
+    {% else %}
+        Crear Nueva Tecnología de Conexión
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">
+        {% if object %}
+            Editar Tecnología de Conexión
+        {% else %}
+            Crear Nueva Tecnología de Conexión
+        {% endif %}
+    </h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.descripcion|as_crispy_field }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'tecnologiaconexion-list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <script>
+        (function () {
+            'use strict'
+
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+{% endblock %}

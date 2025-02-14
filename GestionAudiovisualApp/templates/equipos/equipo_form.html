@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if view.object %}Editar Equipo{% else %}Crear Nuevo Equipo{% endif %}
+{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{% if view.object %}Editar Equipo{% else %}Crear Nuevo Equipo{% endif %}</h2>
+
+<form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+        {{ form.descripcion|as_crispy_field }}
+    </div>
+    <div class="mb-3">
+        {{ form.numero_serial|as_crispy_field }}
+    </div>
+    <div class="mb-3">
+        {{ form.service_tag|as_crispy_field }}
+    </div>
+    <div class="mb-3">
+        {{ form.tipo_equipo|as_crispy_field }}
+    </div>
+    <div class="mb-3">
+        {{ form.marca|as_crispy_field }}
+    </div>
+    <div class="mb-3">
+        {{ form.modelo|as_crispy_field }}
+    </div>
+    <div class="mb-3">
+        {{ form.tecnologia_conexion|as_crispy_field }}
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'equipo-list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

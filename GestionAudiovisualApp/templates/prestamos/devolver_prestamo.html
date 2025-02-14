@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Devolver Préstamo{% endblock %}
+
+{% block content %}
+<h2>Devolver Préstamo</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Registrar Devolución</button>
+    <a href="{% url 'prestamo-list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
