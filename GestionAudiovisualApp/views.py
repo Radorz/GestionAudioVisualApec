@@ -9,7 +9,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-
+from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
 # Create your views here.
 
 @login_required
@@ -20,7 +21,8 @@ def custom_logout(request):
 def inicio(request):
     return render(request, 'inicio.html')
 
-
+def is_admin(user):
+    return user.is_staff
 class CustomLoginView(LoginView):
     template_name = 'auth/login.html'
     redirect_authenticated_user = True
@@ -28,6 +30,7 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return reverse_lazy('inicio')
 # CRUD para TipoEquipo
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class TipoEquipoListView(ListView):
     model = TipoEquipo
     template_name = 'tipos-equipos/tipoequipo_list.html'
@@ -70,6 +73,7 @@ class ToggleEstadoTipoEquipoView(View):
         tipo_equipo.save()
         return redirect(reverse('tipoequipo-list'))
 
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class MarcaListView(ListView):
     model = Marca
     template_name = 'marcas/marca_list.html'
@@ -108,6 +112,7 @@ class ToggleEstadoMarcaView(View):
         return redirect(reverse('marca-list'))
 
 # Modelo Views
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class ModeloListView(ListView):
     model = Modelo
     template_name = 'modelos/modelo_list.html'
@@ -146,6 +151,8 @@ class ToggleEstadoModeloView(View):
         modelo.save()
         return redirect(reverse('modelo-list'))
 # Tecnología de Conexión Views
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class TecnologiaConexionListView(ListView):
     model = TecnologiaConexion
     template_name = 'tecnologia-conexion/tecnologiaconexion_list.html'
@@ -181,6 +188,8 @@ class ToggleEstadoTecnologiaConexionView(View):
         tecnologia.estado = not tecnologia.estado  # Cambiar el estado
         tecnologia.save()
         return redirect(reverse('tecnologiaconexion-list'))
+    
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class EquipoListView(ListView):
     model = Equipo
     template_name = 'equipos/equipo_list.html'
@@ -222,6 +231,8 @@ class ToggleEstadoEquipoView(View):
         equipo.estado = not equipo.estado  # Cambiar el estado
         equipo.save()
         return redirect(reverse('equipo-list'))
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class UsuarioListView(ListView):
     model = Usuario
     template_name = 'usuarios/usuario_list.html'
@@ -257,6 +268,8 @@ class ToggleEstadoUsuarioView(View):
         usuario.estado = not usuario.estado  # Cambiar el estado
         usuario.save()
         return redirect(reverse('usuario-list'))
+    
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class EmpleadoListView(ListView):
     model = Empleado
     template_name = 'empleados/empleado_list.html'

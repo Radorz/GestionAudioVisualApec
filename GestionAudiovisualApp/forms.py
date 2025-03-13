@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 class ModeloForm(forms.ModelForm):
     marca = forms.ModelChoiceField(
-        queryset=Marca.objects.all(),
+        queryset=Marca.objects.filter(estado=True),
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label="Seleccione una marca"
     )
@@ -16,7 +16,7 @@ class ModeloForm(forms.ModelForm):
 
 class EquipoForm(forms.ModelForm):
     tipo_equipo = forms.ModelChoiceField(
-        queryset= TipoEquipo.objects.all(),
+        queryset= TipoEquipo.objects.filter(estado=True),
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label="Seleccione un Tipo Equipo"
     )
@@ -52,6 +52,13 @@ class UsuarioForm(forms.ModelForm):
         cedula = self.cleaned_data.get('cedula')
         validar_cedula(cedula)  # Llama a la función de validación
         return cedula
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['cedula'])  # Establecer la cédula como contraseña
+        if commit:
+            user.save()
+        return user
 
 class EmpleadoForm(forms.ModelForm):
     class Meta:
@@ -67,17 +74,17 @@ class EmpleadoForm(forms.ModelForm):
 
 class PrestamoForm(forms.ModelForm):
     empleado = forms.ModelChoiceField(
-        queryset= Empleado.objects.all(),
+        queryset= Empleado.objects.filter(estado=True),
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label="Seleccione Empledo"
     )
     equipo = forms.ModelChoiceField(
-        queryset= Equipo.objects.all(),
+        queryset= Equipo.objects.filter(estado=True),
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label="Seleccione Equipo"
     )
     usuario = forms.ModelChoiceField( 
-        queryset= Usuario.objects.all(),
+        queryset= Usuario.objects.filter(estado=True),
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label="Seleccione Usuario"
     )
@@ -89,6 +96,15 @@ class PrestamoForm(forms.ModelForm):
         'fecha_devolucion': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        equipo = cleaned_data.get('equipo')
+        if equipo:
+            prestamos_activos = Prestamo.objects.filter(equipo=equipo, fecha_devolucion__isnull=True)
+            if prestamos_activos.exists():
+                raise ValidationError(f'El equipo {equipo} ya está prestado y no ha sido devuelto.')
+        return cleaned_data
 
 
 
@@ -108,8 +124,8 @@ class DevolverPrestamoForm(forms.ModelForm):
 
 
 class ConsultaCriteriosForm(forms.Form):
-    usuario = forms.ModelChoiceField(queryset=Usuario.objects.all(), required=False, label="Usuario")
-    equipo = forms.ModelChoiceField(queryset=Equipo.objects.all(), required=False, label="Equipo")
+    usuario = forms.ModelChoiceField(queryset=Usuario.objects.filter(estado=True), required=False, label="Usuario")
+    equipo = forms.ModelChoiceField(queryset=Equipo.objects.filter(estado=True), required=False, label="Equipo")
     fecha_inicio = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}), label="Fecha Inicio")
     fecha_fin = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}), label="Fecha Fin")
-    tipo_equipo = forms.ModelChoiceField(queryset=TipoEquipo.objects.all(), required=False, label="Tipo de Equipo")
+    tipo_equipo = forms.ModelChoiceField(queryset=TipoEquipo.objects.filter(estado=True), required=False, label="Tipo de Equipo")
