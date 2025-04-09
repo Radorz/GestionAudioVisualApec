@@ -11,6 +11,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
+
+import openpyxl
+from django.http import HttpResponse
+from .models import Prestamo
+from django.db.models import Q
+from datetime import datetime
+
+
 # Create your views here.
 
 @login_required
@@ -83,7 +91,7 @@ class MarcaListView(ListView):
         query = self.request.GET.get('q')
         if query:
             queryset = queryset.filter(
-                Q(nombre__icontains=query)
+                Q(descripcion__icontains=query)
             )
         return queryset
 
@@ -274,7 +282,14 @@ class EmpleadoListView(ListView):
     model = Empleado
     template_name = 'empleados/empleado_list.html'
     context_object_name = 'empleados'
-
+    def get_queryset(self):
+        queryset = Empleado.objects.all()
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(nombre__icontains=query) 
+            )
+        return queryset
 class EmpleadoCreateView(CreateView):
     model = Empleado
     form_class = EmpleadoForm
@@ -297,6 +312,95 @@ class ToggleEstadoEmpleadoView(View):
         empleado.estado = not empleado.estado  # Cambiar el estado
         empleado.save()
         return redirect(reverse('empleado-list'))
+    
+
+def consulta_imprimir_view(request):
+    form = ConsultaCriteriosForm(request.GET or None)
+    prestamos = Prestamo.objects.all()
+
+    if form.is_valid():
+        usuario = form.cleaned_data.get('usuario')
+        equipo = form.cleaned_data.get('equipo')
+        fecha_inicio = form.cleaned_data.get('fecha_inicio')
+        fecha_fin = form.cleaned_data.get('fecha_fin')
+        tipo_equipo = form.cleaned_data.get('tipo_equipo')
+
+        if usuario:
+            prestamos = prestamos.filter(usuario=usuario)
+        if equipo:
+            prestamos = prestamos.filter(equipo=equipo)
+        if fecha_inicio:
+            prestamos = prestamos.filter(fecha_prestamo__date__gte=fecha_inicio)
+        if fecha_fin:
+            prestamos = prestamos.filter(fecha_prestamo__date__lte=fecha_fin)
+        if tipo_equipo:
+            prestamos = prestamos.filter(equipo__tipo_equipo=tipo_equipo)
+
+    return render(request, 'prestamos/consulta_imprimir.html', {
+        'prestamos': prestamos,
+        'form': form
+    })
+
+def consulta_exportar_excel_view(request):
+    prestamos = Prestamo.objects.all()
+
+    usuario_id = request.GET.get("usuario")
+    equipo_id = request.GET.get("equipo")
+    tipo_equipo = request.GET.get("tipo_equipo")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    if usuario_id:
+        prestamos = prestamos.filter(usuario_id=usuario_id)
+
+    if equipo_id:
+        prestamos = prestamos.filter(equipo_id=equipo_id)
+
+    if tipo_equipo:
+        prestamos = prestamos.filter(equipo__tipo_equipo_id=tipo_equipo)
+
+    if fecha_inicio:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+            prestamos = prestamos.filter(fecha_prestamo__gte=fecha_inicio)
+        except ValueError:
+            pass
+
+    if fecha_fin:
+        try:
+            fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
+            prestamos = prestamos.filter(fecha_prestamo__lte=fecha_fin)
+        except ValueError:
+            pass
+
+    # Crear libro de Excel
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Préstamos"
+
+    # Encabezados
+    headers = ["ID", "Usuario", "Empleado", "Equipo", "Fecha Préstamo", "Fecha Devolución", "Estado"]
+    ws.append(headers)
+
+    for p in prestamos:
+        ws.append([
+            p.id,
+            str(p.usuario),
+            str(p.empleado),
+            str(p.equipo),
+            p.fecha_prestamo.strftime("%d/%m/%Y %H:%M") if p.fecha_prestamo else '',
+            p.fecha_devolucion.strftime("%d/%m/%Y %H:%M") if p.fecha_devolucion else 'No devuelto',
+            "Activo" if p.estado else "Inactivo"
+        ])
+
+    # Preparar la respuesta
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = 'attachment; filename=prestamos_exportados.xlsx'
+    wb.save(response)
+    return response
+
 class PrestamoListView(ListView):
     model = Prestamo
     template_name = 'prestamos/prestamo_list.html'

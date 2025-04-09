@@ -69,13 +69,6 @@
     <!-- Sidebar -->
     <nav id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 bg-dark">
         <h4>Gestión AudioVisual</h4>
-        {% if user.is_authenticated%}
-            <p>Hi, {{user.username}} :)</p>
-            <p><a href="{% url 'logout' %}">Log Out</a></p>
-        {%else%}
-            <p>You are not logged in</p>
-            <a class="btn btn-sm btn-primary" href="{% url 'login' %}">Login</a>
-        {%endif%}
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">       
             <!-- Opción para Prestamos -->
@@ -153,6 +146,22 @@
     </ul>
             <!-- Agregar más ítems si es necesario -->
         </ul>
+
+        {% if user.is_authenticated%}
+        <div class="card bg-dark text-white border-0 mb-4 p-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fa-2x me-2"></i>
+                <div>
+                    <small class="text-muted">Bienvenido</small><br>
+                    <strong>{{ request.user.username }}</strong>
+                </div>
+            </div>
+            <hr class="bg-secondary my-2">
+            <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light mt-2 w-100">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </a>
+        </div>
+        {%endif%}
     </nav>
 
     <!-- Main content -->

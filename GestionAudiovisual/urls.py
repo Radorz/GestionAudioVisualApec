@@ -24,7 +24,7 @@ from GestionAudiovisualApp.views import ( ToggleEstadoEmpleadoView, ToggleEstado
     EquipoListView, EquipoCreateView, EquipoUpdateView, EquipoDeleteView,
     UsuarioListView, UsuarioCreateView, UsuarioUpdateView, UsuarioDeleteView,
     EmpleadoListView, EmpleadoCreateView, EmpleadoUpdateView, EmpleadoDeleteView,
-    PrestamoListView, PrestamoCreateView, PrestamoUpdateView, PrestamoDeleteView, DevolverPrestamoView, CustomLoginView, consulta_criterios_view
+    PrestamoListView, PrestamoCreateView, PrestamoUpdateView, PrestamoDeleteView, DevolverPrestamoView, CustomLoginView, consulta_criterios_view, consulta_imprimir_view, consulta_exportar_excel_view
 )
 from GestionAudiovisualApp import views
 
@@ -89,5 +89,7 @@ urlpatterns = [
     path('prestamos/<int:pk>/delete/', PrestamoDeleteView.as_view(), name='prestamo-delete'),
     path('prestamos/<int:pk>/devolver/', DevolverPrestamoView.as_view(), name='devolver-prestamo'),
     path('consulta/', consulta_criterios_view, name='consulta-criterios'),
+    path('consulta/imprimir/', consulta_imprimir_view, name='consulta-imprimir'),
+    path('consulta/exportar-excel/', consulta_exportar_excel_view, name='consulta-exportar-excel'),
 
 ]
