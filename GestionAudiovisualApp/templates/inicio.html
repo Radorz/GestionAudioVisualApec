@@ -3,9 +3,119 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="jumbotron bg-light p-5 rounded-lg shadow-sm">
-        <h1 class="display-4">Bienvenido a la Gestión AudioVisual</h1>
+<div class="container-fluid px-4">
+    <h2 class="mt-4">Dashboard General</h2>
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-4">
+                <div class="card-body">Usuarios
+                    <i class="fas fa-users float-end"></i>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <span>{{ total_usuarios }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-4">
+                <div class="card-body">Empleados
+                    <i class="fas fa-user-tie float-end"></i>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <span>{{ total_empleados }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-purple mb-4" style="background-color: #6f42c1;">
+                <div class="card-body">Equipos
+                    <i class="fas fa-desktop float-end"></i>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <span>{{ total_equipos }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-4">
+                <div class="card-body">Préstamos
+                    <i class="fas fa-calendar-check float-end"></i>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <span>{{ total_prestamos }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    Estado de Préstamos
+                </div>
+                <div class="card-body">
+                    <canvas id="prestamoChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">Ultimos Usuarios</div>
+                        <ul class="list-group list-group-flush">
+                            {% for u in ultimos_usuarios %}
+                            <li class="list-group-item">{{ u.nombre }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header  bg-dark text-white">Ultimos Equipos</div>
+                        <ul class="list-group list-group-flush">
+                            {% for e in ultimos_equipos %}
+                            <li class="list-group-item">{{ e.descripcion }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">Ultimos Préstamos</div>
+                        <ul class="list-group list-group-flush">
+                            {% for p in ultimos_prestamos %}
+                            <li class="list-group-item">{{ p.fecha_prestamo|date:"Y-m-d" }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+window.addEventListener('load', function () {
+  const ctx = document.getElementById('prestamoChart');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Prestados', 'Devueltos'],
+      datasets: [{
+        label: 'Estado de Préstamos',
+        data: [{{ prestados|default:0 }}, {{ devueltos|default:0 }}],
+        backgroundColor: ['#36A2EB', '#4BC0C0'],
+        borderWidth: 1
+      }]
+    }
+  });
+});
+</script>
 {% endblock %}

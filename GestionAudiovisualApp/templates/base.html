@@ -70,7 +70,12 @@
     <nav id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 bg-dark">
         <h4>Gestión AudioVisual</h4>
         <hr>
-        <ul class="nav nav-pills flex-column mb-auto">       
+        <ul class="nav nav-pills flex-column mb-auto">      
+            <li class="nav-item">
+                <a href="{% url 'inicio' %}" class="nav-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+                  <i class="fas fa-home"></i> Dashboard
+                </a>
+              </li> 
             <!-- Opción para Prestamos -->
         <li class="nav-item">
             <a href="{% url 'prestamo-list' %}" class="nav-link {% if request.resolver_match.url_name == 'prestamo-list' %}active{% endif %}">

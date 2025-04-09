@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
+from django.db.models import Count
 
 import openpyxl
 from django.http import HttpResponse
@@ -53,6 +54,38 @@ class TipoEquipoListView(ListView):
                 Q(descripcion__icontains=query)  # Buscar por descripción
             )
         return queryset
+
+def dashboard_view(request):
+    total_usuarios = Usuario.objects.count()
+    total_empleados = Empleado.objects.count()
+    total_equipos = Equipo.objects.count()
+    total_prestamos = Prestamo.objects.count()
+
+    # Estado de préstamos para gráfico (prestable vs devuelto)
+    prestamos_estado = Prestamo.objects.values('estado').annotate(cantidad=Count('estado'))
+
+    # Últimos registros
+    ultimos_usuarios = Usuario.objects.order_by('-id')[:5]
+    ultimos_equipos = Equipo.objects.order_by('-id')[:5]
+    ultimos_prestamos = Prestamo.objects.order_by('-fecha_prestamo')[:5]
+    prestados = Prestamo.objects.filter(estado=True).count()
+    devueltos = Prestamo.objects.filter(estado=False).count()
+    context = {
+        'total_usuarios': total_usuarios,
+        'total_empleados': total_empleados,
+        'total_equipos': total_equipos,
+        'total_prestamos': total_prestamos,
+        'prestamos_estado': prestamos_estado,
+        'ultimos_usuarios': ultimos_usuarios,
+        'ultimos_equipos': ultimos_equipos,
+        'ultimos_prestamos': ultimos_prestamos,
+        'prestados': prestados,
+        'devueltos': devueltos,
+    }
+
+    return render(request, 'inicio.html', context)
+
+
 
 class TipoEquipoCreateView(CreateView):
     model = TipoEquipo

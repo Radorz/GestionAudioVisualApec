@@ -24,13 +24,13 @@ from GestionAudiovisualApp.views import ( ToggleEstadoEmpleadoView, ToggleEstado
     EquipoListView, EquipoCreateView, EquipoUpdateView, EquipoDeleteView,
     UsuarioListView, UsuarioCreateView, UsuarioUpdateView, UsuarioDeleteView,
     EmpleadoListView, EmpleadoCreateView, EmpleadoUpdateView, EmpleadoDeleteView,
-    PrestamoListView, PrestamoCreateView, PrestamoUpdateView, PrestamoDeleteView, DevolverPrestamoView, CustomLoginView, consulta_criterios_view, consulta_imprimir_view, consulta_exportar_excel_view
+    PrestamoListView, PrestamoCreateView, PrestamoUpdateView, PrestamoDeleteView, DevolverPrestamoView, CustomLoginView, consulta_criterios_view, consulta_imprimir_view, consulta_exportar_excel_view, dashboard_view
 )
 from GestionAudiovisualApp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('inicio', inicio, name='inicio'),  
+    path('inicio', dashboard_view, name='inicio'),  
     path('', CustomLoginView.as_view(), name='login'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout', views.custom_logout, name='logout'),
